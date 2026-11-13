@@ -1,0 +1,8 @@
+# GateKit map
+
+> The engine of the GateKit map site and the home of its database releases. The site itself
+> describes its URL scheme and JSON in its own `/llms.txt`.
+
+- [README](README.md): what the databases are, the withdrawal promise, how to run the site.
+- [The site's design](docs/design/map-site.md): what is on it, how it is kept, why a server.
+- [Working here](AGENTS.md): the rules.

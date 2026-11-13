@@ -1,0 +1,3 @@
+[submodule "gatekit"]
+	path = gatekit
+	url = https://github.com/bg3gk/gatekit.git

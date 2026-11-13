@@ -1,0 +1,6 @@
+{
+  "_": "Which release of the prebuilt databases `map fetch` downloads. The data is Baldur's Gate 3's own content and facts about its engine, rearranged so it can be queried; it is withdrawn the same day it is asked for (README.md). A database and the engine that reads it belong together, so this is pinned, not resolved at run time. Nothing has been published yet: with no tag, `map fetch` refuses and says how to build the databases or where else to fetch them from.",
+  "repository": "bg3gk/map",
+  "tag": null,
+  "manifest": "manifest.json"
+}

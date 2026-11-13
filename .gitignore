@@ -1,0 +1,16 @@
+# build output
+bin/
+obj/
+*.user
+.vs/
+.idea/
+.claude/
+# the databases, fetched from a release or built by gatekit; never committed
+*.sqlite
+*.sqlite-*
+*.zst
+*.zst.[0-9][0-9][0-9]
+/data/
+# the rendered site: built, served, never committed
+/site/
+search.sqlite

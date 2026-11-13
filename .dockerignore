@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+.git
+gatekit/.git
+site/
+data/
+*.sqlite
+*.sqlite-*

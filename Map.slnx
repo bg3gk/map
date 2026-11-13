@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/engine/">
+    <Project Path="engine/src/GateKit.Site/GateKit.Site.csproj" />
+    <Project Path="engine/src/Map.Cli/Map.Cli.csproj" />
+    <Project Path="engine/tests/GateKit.Site.Tests/GateKit.Site.Tests.csproj" />
+  </Folder>
+</Solution>

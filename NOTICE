@@ -1,0 +1,10 @@
+GateKit map
+Copyright (c) 2026 Gwynerva and GateKit contributors. MIT License (LICENSE).
+
+The engine is built on GateKit (the `gatekit` submodule, https://github.com/bg3gk/gatekit),
+whose NOTICE lists the third-party components it uses, among them Norbyte's LSLib.
+
+The databases this engine reads are published as release assets, never in this tree. The game's
+content inside them is Larian Studios', and is withdrawn the same day it is asked for (README.md).
+The component map and the facts about the engine's binaries are the GateKit project's own
+research.
