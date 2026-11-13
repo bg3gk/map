@@ -1,0 +1,26 @@
+# The map site behind Caddy, which holds the certificate and renews it by itself.
+# install.sh writes this to /etc/caddy/Caddyfile with the domain filled in.
+{$MAP_DOMAIN} {
+	# `map serve` sends pages already compressed; Caddy compresses only what is not.
+	encode zstd gzip
+
+	# The search and the index are limited per reader by the server itself, which reads the
+	# address Caddy says a request came from.
+	reverse_proxy 127.0.0.1:8765
+
+	header {
+		# Out of the search engines; `map serve` says so on every answer but llms.txt and
+		# robots.txt, and this keeps it so even if a page slips past it.
+		?X-Robots-Tag "noindex, nofollow"
+		Referrer-Policy no-referrer
+		X-Content-Type-Options nosniff
+		-Server
+	}
+
+	log {
+		output file /var/log/caddy/map.log {
+			roll_size 50mb
+			roll_keep 5
+		}
+	}
+}

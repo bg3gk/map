@@ -1,0 +1,26 @@
+# The map site's server, beside another site whose Caddy runs in Docker. It listens on the
+# Docker network's gateway, which that Caddy can reach and the internet cannot, and believes
+# the addresses Caddy passes on from that network.
+[Unit]
+Description=GateKit map site
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=map
+Group=map
+Environment=MAP_DATA=/var/lib/map/data
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+ExecStart=/opt/map/bin/map serve --dir /var/lib/map/site --db /var/lib/map/data/gameindex.sqlite --host 172.18.0.1 --port 8765 --proxy 172.18.0.0/16
+Restart=on-failure
+RestartSec=5
+# Never let it starve the site beside it.
+MemoryMax=1G
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadOnlyPaths=/var/lib/map
+
+[Install]
+WantedBy=multi-user.target

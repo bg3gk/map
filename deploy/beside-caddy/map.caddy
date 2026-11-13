@@ -1,0 +1,11 @@
+map.example.org {
+  encode zstd gzip
+  reverse_proxy 172.18.0.1:8765
+  header {
+    -Server
+    ?X-Robots-Tag "noindex, nofollow"
+    Strict-Transport-Security "max-age=31536000"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "no-referrer"
+  }
+}

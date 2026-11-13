@@ -1,0 +1,23 @@
+# The map site's server. install.sh writes this to /etc/systemd/system/map.service.
+[Unit]
+Description=GateKit map site
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=map
+Group=map
+Environment=MAP_DATA=/var/lib/map/data
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+ExecStart=/opt/map/bin/map serve --dir /var/lib/map/site --port 8765
+Restart=on-failure
+RestartSec=5
+# It reads two databases and a site folder and writes nothing.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadOnlyPaths=/var/lib/map
+
+[Install]
+WantedBy=multi-user.target
