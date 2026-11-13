@@ -1,0 +1,238 @@
+/* The whole look of the site. Two themes, because a browser has two. */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1b1b1f;
+  --muted: #5c6070;
+  --line: #e3e4ea;
+  --panel: #f7f8fa;
+  --id: #0b4ea2;
+  --id-bg: #eef3fb;
+  --id-line: #d3e0f3;
+  --path: #6a3fa0;
+  --accent: #9a5b20;
+  --veil: rgba(255, 255, 255, .62);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #13151a;
+    --fg: #dfe2e9;
+    --muted: #9aa1b0;
+    --line: #272b34;
+    --panel: #181b21;
+    --id: #8fb8ff;
+    --id-bg: #1a2130;
+    --id-line: #283348;
+    --path: #c7a6f5;
+    --accent: #e3a85f;
+    --veil: rgba(19, 21, 26, .62);
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--id); }
+code, .id, .pt, input { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+header {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+header .home { font-weight: 600; text-decoration: none; color: var(--fg); white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px; }
+header .pin { flex: none; }
+header form { flex: 1; display: flex; min-width: 160px; }
+input[type=search] {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  font-size: 14px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+input[type=search]:focus { outline: 2px solid var(--id); outline-offset: -1px; }
+
+main { max-width: 1000px; margin: 0 auto; padding: 22px 20px 40px; }
+h1 { font-size: 23px; margin: 0 0 2px; word-break: break-word; }
+h2 { font-size: 15px; margin: 26px 0 8px; color: var(--accent); font-weight: 600; }
+p.sub { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 16px; margin: 0; }
+dt { color: var(--muted); font-size: 13px; }
+dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+/* An identifier in a field may wrap: a field has no box of its own to scroll in. */
+dd .id, dd .pt { white-space: normal; overflow-wrap: anywhere; }
+/* A short name with a longer explanation behind it says so. */
+dt[title], th[title] { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+
+/* Every table scrolls inside its own box, so a wide one never widens the page. */
+.tw { overflow-x: auto; max-width: 100%; }
+/* Inside its box a table takes the width its content needs, so an identifier that cannot wrap
+   never crushes the columns beside it; prose and notes wrap at a width that reads, and the box
+   scrolls when the whole is wider than the page. */
+.tw table { width: max-content; min-width: 100%; }
+.tw .tx, .tw .nt { display: inline-block; max-width: 34em; white-space: normal; vertical-align: top; }
+.tw .nt { margin-left: 0; }
+.tw .id + .nt { margin-left: 7px; }
+
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 3px 10px 3px 0;
+}
+/* `anywhere` would break "inferred" across two lines to save a pixel; `break-word` breaks only
+   what has no break in it, which is what a uuid is. */
+td { padding: 3px 10px 3px 0; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: break-word; }
+tr:hover td { background: var(--panel); }
+
+/* Every value that names something else reads like an identifier in code, and most are links. */
+.id, .pt {
+  font-size: 12.5px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--id-bg);
+  border: 1px solid var(--id-line);
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.id:hover { text-decoration: underline; }
+.pt { color: var(--path); white-space: normal; }
+.nt { color: var(--muted); font-size: 12.5px; margin-left: 7px; }
+.z { color: var(--muted); font-style: normal; opacity: .55; }
+p.cut { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
+p.raw { margin: 30px 0 0; color: var(--muted); font-size: 13px; }
+
+/* Two short lines, the way fan sites say it: what this is and whose the content is, then where
+   it came from and where legal questions go. */
+footer {
+  max-width: 1000px;
+  margin: 6px auto 0;
+  padding: 18px 20px 40px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  display: grid;
+  gap: 7px;
+}
+footer p { margin: 0; max-width: 74ch; }
+footer .made { font-size: 12px; }
+
+/* The home page and the search results. */
+.hero { margin: 40px 0 26px; }
+.hero h1 { font-size: 30px; }
+.lead { color: var(--muted); max-width: 62ch; }
+.big { padding: 11px 13px; font-size: 16px; }
+.group { margin: 22px 0; }
+.group h2 { margin-bottom: 4px; }
+.hit { display: block; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.hit .id { margin-right: 8px; white-space: normal; overflow-wrap: anywhere; }
+
+/* A phone: the header wraps, and a page's fields stack. */
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; padding: 8px 16px; }
+  header form { order: 3; flex-basis: 100%; }
+  main { padding: 16px 16px 32px; }
+  footer { padding: 16px 16px 32px; }
+  dl { grid-template-columns: 1fr; }
+  dt { margin-top: 8px; }
+}
+.hit em { font-style: normal; background: var(--id-bg); border-radius: 3px; }
+.kinds { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 0; list-style: none; }
+.state { color: var(--muted); font-size: 13px; }
+
+/* The home page: one column per map. */
+.maps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 28px; margin: 10px 0 6px; }
+.map h2 { margin-top: 18px; }
+.map p { color: var(--muted); font-size: 13.5px; margin: 0 0 8px; }
+.map .kinds { flex-direction: column; gap: 5px; }
+
+/* Waiting. Nothing changes for the first 300 ms of a load - most loads end sooner - and then the
+   page dims under a rolling d20 until the new one is ready. The old page stays where it is
+   underneath; it is replaced only by the new one, never by an empty screen. */
+.wait {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: var(--veil);
+  backdrop-filter: blur(2px);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .18s ease, visibility 0s linear .18s;
+  cursor: progress;
+}
+.wait.on { visibility: visible; opacity: 1; transition: opacity .18s ease; }
+.wait .d20 {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, .35));
+  animation: roll 1.15s cubic-bezier(.45, .05, .55, .95) infinite;
+}
+@keyframes roll {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(200deg) scale(.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wait .d20 { animation: breathe 1.6s ease-in-out infinite; }
+  @keyframes breathe { 50% { opacity: .55; } }
+}
+
+/* A failure: the die lands red with the code where the 20 was, says what went wrong, and offers to
+   try again. It does not roll; it comes down once, with a thud. */
+.wait .die { display: grid; justify-items: center; gap: 16px; padding: 0 16px; }
+.wait.bad { cursor: default; }
+.wait.bad .d20 { animation: thud .55s cubic-bezier(.2, .8, .3, 1.25) 1 both; }
+.wait.bad .body { fill: url(#d20r); stroke: #6E0F12; }
+.wait.bad .lit { fill: #FFC4BD; }
+.wait.bad .shade { fill: #6E0F12; }
+.wait.bad .face { fill: #F0645F; stroke: #6E0F12; }
+.wait.bad .edge { stroke: #6E0F12; }
+.wait.bad .num { fill: #FFF6F5; }
+@keyframes thud {
+  0% { transform: rotate(-40deg) scale(1.25); }
+  60% { transform: rotate(8deg) scale(.96); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+/* Under the die: one line saying what failed, and two words to act on - text, not a box. */
+/* The explanation keeps to a narrow column under the die, however long the reason it carries. */
+.why { width: min(24em, 100%); text-align: center; color: var(--fg); line-height: 1.5; }
+.why p { overflow-wrap: anywhere; }
+.why p { margin: 0 0 6px; }
+.why .acts { margin: 0; display: flex; gap: 18px; justify-content: center; }
+.why button, button.more {
+  font: 14px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--id);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.why button:hover, button.more:hover { text-decoration-thickness: 2px; }
+button.more { font-size: 13px; }
+.why button:focus-visible { outline: 2px solid var(--id); outline-offset: 3px; border-radius: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .wait.bad .d20 { animation: none; }
+}

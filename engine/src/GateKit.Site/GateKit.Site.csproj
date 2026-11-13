@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Renders the three maps as a site, and serves it. -->
+  <PropertyGroup>
+    <RootNamespace>GateKit.Site</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+    <PackageReference Include="System.CommandLine" Version="2.0.15" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../gatekit/src/GateKit.GameData/GateKit.GameData.csproj" />
+    <ProjectReference Include="../../../gatekit/src/GateKit.Release/GateKit.Release.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The client, and the SQLite-over-range-requests reader it loads. Copied into the site. -->
+    <EmbeddedResource Include="Assets/**/*" LogicalName="Assets/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="GateKit.Site.Tests" />
+  </ItemGroup>
+</Project>

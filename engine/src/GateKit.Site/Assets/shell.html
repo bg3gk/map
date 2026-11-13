@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>GateKit Map &middot; the game, the engine, and what we worked out</title>
+<meta name="description" content="Three maps of Baldur's Gate 3: the game's own content, the engine's classes, and our map of its components - one page each, and the same page as JSON.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5C7.6 1.5 4 5 4 9.4c0 5.8 7 12.4 7.3 12.7a1 1 0 0 0 1.4 0C13 21.8 20 15.2 20 9.4 20 5 16.4 1.5 12 1.5Z' fill='%23F5C518' stroke='%238A6A00'/%3E%3Ccircle cx='12' cy='9.4' r='3' fill='%233B2F00'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{BASE}}style.css">
+</head><body>
+<header><a class="home" href="{{BASE}}"><svg class="pin" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 1.5C7.6 1.5 4 5 4 9.4c0 5.8 7 12.4 7.3 12.7a1 1 0 0 0 1.4 0C13 21.8 20 15.2 20 9.4 20 5 16.4 1.5 12 1.5Z" fill="#F5C518" stroke="#8A6A00" stroke-width="1"/><circle cx="12" cy="9.4" r="3" fill="#3B2F00"/></svg>GateKit Map</a>
+<form id="form"><input id="q" name="q" type="search" class="big" placeholder="a name, a line of dialogue, a uuid, a handle" autocomplete="off" autofocus></form></header>
+<main id="main"></main>
+<div id="wait" class="wait" role="status" aria-live="assertive" aria-label="loading">
+<div class="die">
+<svg class="d20" viewBox="0 0 100 100" aria-hidden="true">
+<defs>
+<linearGradient id="d20g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#D99A00"/></linearGradient>
+<linearGradient id="d20r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A80"/><stop offset="1" stop-color="#C62828"/></linearGradient>
+</defs>
+<polygon class="body" points="50,4 90,27 90,73 50,96 10,73 10,27" fill="url(#d20g)" stroke="#7A5A00" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon class="lit" points="50,4 90,27 50,28" fill="#FFEB9C" opacity=".55"/>
+<polygon class="shade" points="10,73 23,72 50,96" fill="#7A5A00" opacity=".22"/>
+<polygon class="shade" points="90,73 77,72 50,96" fill="#7A5A00" opacity=".32"/>
+<polygon class="face" points="50,28 77,72 23,72" fill="#FFD54A" stroke="#7A5A00" stroke-width="2" stroke-linejoin="round"/>
+<path class="edge" d="M50 28 50 4M50 28 10 27M50 28 90 27M77 72 90 27M77 72 90 73M77 72 50 96M23 72 50 96M23 72 10 73M23 72 10 27" stroke="#7A5A00" stroke-width="2" stroke-linecap="round" fill="none"/>
+<text class="num" id="d20n" x="50" y="63" text-anchor="middle" font-size="18" font-weight="700" font-family="system-ui,sans-serif" fill="#3B2F00">20</text>
+</svg>
+<div class="why" id="why" hidden>
+<p id="whyText"></p>
+<p class="acts"><button type="button" id="again">Try again</button> <button type="button" id="dismiss">Close</button></p>
+</div>
+</div>
+</div>
+<template id="home">
+<div class="hero">
+<h1>Three maps of one game</h1>
+<p class="lead">Everything <a href="https://github.com/bg3gk/gatekit">GateKit</a> knows about Baldur&rsquo;s Gate 3, as pages you can
+click through. Every page is drawn from a <code class="id">.json</code> you can fetch yourself, and every value that names
+something else is a link &mdash; so following a thread is clicking through it.</p>
+</div>
+<div class="maps">
+<div class="map">
+<h2>The game&rsquo;s own content</h2>
+<p>What Larian ships, read out of the packages: who speaks which line, what a stat does, what a template is made of,
+where a timeline hides a weapon.</p>
+<ul class="kinds">
+<li><code class="pt">/entity/&lt;uuid&gt;</code></li>
+<li><code class="pt">/dialog/&lt;name&gt;</code></li>
+<li><code class="pt">/timeline/&lt;uuid&gt;</code></li>
+<li><code class="pt">/template/&lt;uuid&gt;</code></li>
+<li><code class="pt">/stat/&lt;name&gt;</code></li>
+<li><code class="pt">/level/&lt;name&gt;</code></li>
+<li><code class="pt">/loca/&lt;handle&gt;</code></li>
+<li><code class="pt">/object/&lt;key&gt;</code></li>
+<li><code class="pt">/source/&lt;package&gt;/&lt;path&gt;</code></li>
+<li><code class="pt">/package/&lt;name&gt;</code></li>
+<li><code class="pt">/osiris/&lt;name&gt;</code></li>
+</ul>
+</div>
+<div class="map">
+<h2>Our map of the engine&rsquo;s components</h2>
+<p>What no file of the game says: what each component&rsquo;s memory holds, field by field, and where in the game it was
+actually seen alive. Read out of a running game over several weeks.</p>
+<ul class="kinds">
+<li><code class="pt">/component/&lt;name&gt;</code></li>
+</ul>
+</div>
+<div class="map">
+<h2>The engine&rsquo;s own symbols</h2>
+<p>Facts about the binaries: which classes exist, how Script Extender declares them, which methods the Toolkit exports
+and where the entity component system registers each type.</p>
+<ul class="kinds">
+<li><code class="pt">/symbol/&lt;name&gt;</code></li>
+<li><code class="pt">/enum/&lt;name&gt;</code></li>
+<li><code class="pt">/function/bg3.exe+0x&lt;address&gt;</code></li>
+</ul>
+</div>
+</div>
+{{AIM}}
+<h2>The thread</h2>
+<p class="lead">A component is seen on an object, the object is placed in a level and speaks in a dialogue, the dialogue is
+staged by a timeline, the timeline hides a weapon at a frame &mdash; and the class the component is declared as has its own
+page among the symbols. Every one of those steps is a link, in both directions. Walking that by hand is what this project
+spent weeks doing.</p>
+<p class="lead">A name with <code class="id">::</code> in it is written with a dot in an address:
+<code class="pt">/component/ecl.ActiveTurnComponent</code>. Add <code class="id">.json</code> to any address for the same
+page as data; <a href="{{BASE}}llms.txt">llms.txt</a> describes the scheme, so an agent builds an address from an id it
+already has instead of scraping anything.</p>
+<p class="lead">Search finds every line of the game&rsquo;s text in all of its languages, every object by its name, and
+every page by its id. A line of text links to its own page, which has it in every language.</p>
+</template>
+<footer id="foot">
+<p class="what">A free fan project for Baldur&rsquo;s Gate 3 modders.
+<span id="whose">Game content &copy; Larian Studios; the component map and the facts about the engine are our own research.</span>
+Not affiliated with Larian Studios.</p>
+<p class="made">Built from {{SOURCE}} with <a href="https://github.com/bg3gk/gatekit">GateKit</a> &middot;
+<a href="https://github.com/bg3gk/map#readme">how to reach us</a>.</p>
+</footer>
+<script>window.SITE_BASE = "{{BASE}}";
+window.SITE_NOTICES = {{NOTICES}}; window.SITE_KINDS = {{KINDS}};</script>
+<script src="{{BASE}}app.js"></script>
+</body></html>

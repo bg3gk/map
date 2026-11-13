@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- `map`: build, check, serve and host the map site from the released databases. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>map</AssemblyName>
+    <RootNamespace>GateKit.Map</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../GateKit.Site/GateKit.Site.csproj" />
+  </ItemGroup>
+</Project>

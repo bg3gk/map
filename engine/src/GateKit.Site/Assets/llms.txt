@@ -1,0 +1,166 @@
+# GateKit Map
+
+> Three maps of Baldur's Gate 3, built by [GateKit](https://github.com/bg3gk/gatekit) and served
+> by the engine in [bg3gk/map](https://github.com/bg3gk/map): the game's own content read out of
+> an ordinary installation, our map of the engine's ECS components, and facts about the engine's
+> binaries. No API key; a page and its data are one thing.
+> Built from {{SOURCE}}.
+
+## The rule
+
+Every object has a URL. Add `.json` to it and you get the page as data - and the `.json` is all
+there is: a browser that opens the address is served a shell that fetches the same file and
+draws it, so what a person reads and what you fetch cannot differ. Fetch the `.json` directly.
+Build the address from an id you already have; there is nothing to scrape.
+
+```
+{{BASE}}entity/<uuid>          a character or an item placed in a level
+{{BASE}}dialog/<name>          a dialogue, by its name without the folder it is filed in
+{{BASE}}timeline/<uuid>        the staging of a dialogue
+{{BASE}}template/<uuid>        a root template
+{{BASE}}stat/<name>            one named row of the game's stat files
+{{BASE}}level/<name>           a level, and what it places
+{{BASE}}loca/<handle>          a line of the game's text, in every language
+{{BASE}}object/<key>           an object as the game's file declares it, with every attribute
+{{BASE}}source/<package>/<path> a file the index read, and every object it declares
+{{BASE}}package/<name>         a package of the game, and every file inside it
+{{BASE}}osiris/<name>          a name of the story scripts, and every script that uses it
+{{BASE}}component/<name>       an engine component, what its memory holds and where it was seen
+{{BASE}}symbol/<name>          a class of the engine, its declared layout and its exported methods
+{{BASE}}enum/<name>            an enumeration of the engine
+{{BASE}}function/<binary>+0x<rva>  a function of the engine's binaries: bg3.exe, bg3_dx11.exe or a Toolkit DLL
+```
+
+A C++ name is qualified with `::`, which is not a usable path segment everywhere, so a dot
+stands in for it: `ecl::ActiveTurnComponent` is at `{{BASE}}component/ecl.ActiveTurnComponent`.
+Anything else outside `[A-Za-z0-9._-]` is written as `!` and two hex digits of its UTF-8
+bytes - `Background_LegendOfBaldur'sGate` is `stat/Background_LegendOfBaldur!27sGate` - and is
+asked for exactly as written. Two ids that differ only in case get `~2`, `~3` appended to the
+later one in ordinal order.
+
+What this site holds: {{COUNTS}}.
+
+## Searching
+
+`{{BASE}}api/search?q=<words>` answers JSON:
+
+```json
+{
+  "exact": "dialog/...",
+  "pages": [ { "kind": "...", "route": "...", "name": "...", "note": "..." } ],
+  "lines": [ { "handle": "h...", "lang": "English", "text": "... <em>word</em> ..." } ],
+  "names": [ { "name": "...", "node": "...", "key": "...", "route": "..." } ]
+}
+```
+
+`exact` is set when what you asked is the id of exactly one page; the lists are then empty.
+Every word is matched by its beginning, all of them must match, and `&lang=<language>` keeps the
+lines to one language. Lines of Chinese, Japanese and Korean are matched anywhere in the line,
+three characters or more. `names` are objects of the game found by name; `route` is set on those
+that have a page. A search is limited per address per minute; an answer of `429` says to wait.
+
+An address is found the way a decompiler shows it, too: `bg3.exe+0x77F580`, `0x14077F580` or
+`FUN_14077f580` answers with the function it is in - and for an absolute address, with the
+function in each build of the game, because both are loaded at the same base. The absolute
+addresses assume each binary's default base: `0x140000000` for an executable, `0x180000000` for a
+library.
+
+An object whose key is given twice has two pages, the second at `object/<key>.<row>`; an object
+with no key is at `object/row.<row>`.
+
+Languages: {{LANGUAGES}}.
+
+## The shape of the JSON
+
+```json
+{
+  "kind": "dialog", "id": "...", "route": "dialog/...",
+  "title": "...", "subtitle": "...",
+  "fields":   { "timeline": <value>, "nodes": <value>, ... },
+  "sections": [ { "title": "Lines", "columns": [...], "shown": 200, "total": 1430,
+                  "rows": [ [ <value>, ... ] ] } ],
+  "hints":    { "<a field or column name>": "what it means" },
+  "links":    [ <value>, ... ],
+  "index":    { "origin": "game", "fullIndex": "map fetch", "about": "{{BASE}}llms.txt" }
+}
+```
+
+Every `route`, at the top of a page or inside a value, is relative to the site root: the URL is
+`{{BASE}}` plus the route. Field names are unique on a page and are written in the order the page
+shows them.
+
+A `<value>` is written as small as it can be said:
+
+| what you get | what it is |
+|---|---|
+| `null` | nothing at all |
+| `"some text"` | ordinary prose |
+| `12.5` | a number |
+| `{"route": "template/<uuid>"}` | **a link**: the kind is the first segment, the id is the rest |
+| `{"id": "VFX_Blood"}` | names something that has no page here |
+| `{"path": "Public/Shared/Stats/…"}` | a file path inside the game's packages |
+
+`"text"` appears on a link only when what is shown differs from the last segment of the route
+read back - every `!xx` as a byte of UTF-8. Any of the object forms may carry `"note"`, a few
+words saying what the identifier is. A link to a line of text carries the line itself: in
+English as its `note` (or its `text`, where the line is what the table is about), and in every
+other language in `"texts": {"<language>": "..."}` - so resolving a line costs no second request.
+
+`links` is every distinct object the page names, in the order it appears. Follow those and you
+have walked the web.
+
+`index.origin` says whose material a page is: `game` for Larian's text, published under the
+promise below, and `ours` for what we measured - the component map, the classes and the
+enumerations. A section whose `total` is larger than its `shown` was cut; the rest are in the
+databases `map fetch` downloads.
+
+## The thread between the three maps
+
+It runs both ways:
+
+- a **component** page lists where it was seen - each sighting names a **dialogue** or an
+  **object**, and links to it;
+- an **object** page lists the components seen on it, the **template** it was made from, the
+  **level** it is placed in and the **dialogues** it speaks in;
+- a **dialogue** page lists the components seen while it played, its lines, and the
+  **timelines** that stage it;
+- a **line** of text lists every language, the recordings that voice it and where it is said;
+- a **timeline** page lists its actors and the tracks that hide or show a piece of gear;
+- a **level** page lists what it places and the components seen while it was loaded;
+- a **component** page names the **class** it is, which has its own page among the symbols, and
+  a **symbol** page names our map of it, if we have mapped it.
+
+## When something fails
+
+A page that cannot be drawn says so on a red d20 that has landed on a 1 - a critical failure -
+with the reason underneath. The reason names the HTTP status where the server answered with one,
+and otherwise ends with one of these numbers:
+
+| code | what failed |
+|---|---|
+| `1` | the site could not be reached: the connection or the server is down |
+| `2` | the search could not be answered |
+| `4` | the data of a page could not be read |
+
+An address with no page is not a failure: it answers 404 with the shell, which says there is no
+such page and shows what the search finds for it.
+
+## What is not here
+
+- Art, audio, video, fonts and textures. The index records that a resource exists and what it is
+  called; it never carries the resource.
+- The engine's code. Names, addresses, sizes, layouts and calls are facts about it and are here;
+  decompiled code is not, and never will be.
+
+## The promise
+
+The game's content here is Larian Studios'. <https://github.com/bg3gk/map#readme> says how to
+ask for it to be taken down.
+
+The component map and the facts about the engine's binaries are ours: they are the result of
+reading and measuring a running game, and no file of the game contains them.
+
+The site is kept out of search engines: every answer says `noindex`, and `robots.txt` lets
+crawlers read this file and nothing else. A copy of the game's text in someone else's index
+would outlive the day it was withdrawn here. An agent fetching a page because a person asked
+it to is not a crawler, and is welcome.
